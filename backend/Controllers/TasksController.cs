@@ -1,58 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace backend.Controllers
+[ApiController]
+[Route("tasks")]
+public class TasksController : ControllerBase
 {
-    [ApiController]
-    [Route("tasks")]
-    public class TasksController : ControllerBase
+    private readonly AppDbContext _context;
+
+    public TasksController(AppDbContext context)
     {
-        private static List<string> tasks = new List<string>()
-        {
-            "Learn ASP.NET",
-            "Build API",
-            "Connect React"
-        };
+        _context = context;
+    }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(tasks);
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetTasks()
+    {
+        return Ok(await _context.Tasks.ToListAsync());
+    }
 
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if (id < 0 || id >= tasks.Count)
-                return NotFound();
+    [HttpPost]
+    public async Task<IActionResult> AddTask(TaskItem task)
+    {
+        _context.Tasks.Add(task);
+        await _context.SaveChangesAsync();
+        return Ok(task);
+    }
 
-            return Ok(tasks[id]);
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateTask(int id, TaskItem updatedTask)
+    {
+        var task = await _context.Tasks.FindAsync(id);
 
-        [HttpPost]
-        public IActionResult Create([FromBody] string task)
-        {
-            tasks.Add(task);
-            return Ok(tasks);
-        }
+        if (task == null)
+            return NotFound();
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] string task)
-        {
-            if (id < 0 || id >= tasks.Count)
-                return NotFound();
+        task.Name = updatedTask.Name;
+        task.IsCompleted = updatedTask.IsCompleted;
 
-            tasks[id] = task;
-            return Ok(tasks);
-        }
+        await _context.SaveChangesAsync();
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            if (id < 0 || id >= tasks.Count)
-                return NotFound();
-
-            tasks.RemoveAt(id);
-            return Ok(tasks);
-        }
+        return Ok(task);
     }
 }
