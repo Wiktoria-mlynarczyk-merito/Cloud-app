@@ -23,7 +23,25 @@
 
             data.forEach(t => {
                 const li = document.createElement("li");
-                li.textContent = t.name + (t.isCompleted ? " ✔" : "");
+
+                // checkbox
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = t.isCompleted;
+
+                checkbox.onchange = () => updateTask(t);
+
+                // tekst
+                const span = document.createElement("span");
+                span.textContent = " " + t.name;
+
+                if (t.isCompleted) {
+                    span.style.textDecoration = "line-through";
+                }
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+
                 list.appendChild(li);
             });
         }
@@ -41,6 +59,20 @@
             });
 
             input.value = "";
+            loadTasks();
+        }
+
+        async function updateTask(task) {
+            await fetch(API + "/" + task.id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: task.id,
+                    name: task.name,
+                    isCompleted: !task.isCompleted
+                })
+            });
+
             loadTasks();
         }
 
