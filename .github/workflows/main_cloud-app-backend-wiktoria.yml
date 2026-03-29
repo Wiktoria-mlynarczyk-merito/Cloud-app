@@ -10,7 +10,7 @@ jobs:
 build:
 runs-on: windows-latest
 
-
+```
 steps:
   - uses: actions/checkout@v4
 
@@ -36,13 +36,13 @@ steps:
     with:
       name: backend-app
       path: backend/publish
-
+```
 
 deploy:
 runs-on: windows-latest
 needs: build
 
-
+```
 steps:
   - name: Download artifact
     uses: actions/download-artifact@v4
@@ -61,4 +61,4 @@ steps:
     with:
       app-name: cloud-app-backend-wiktoria
       package: .
-
+```
