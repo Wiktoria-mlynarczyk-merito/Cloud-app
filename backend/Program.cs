@@ -17,18 +17,24 @@ builder.Services.AddCors(options =>
         });
 });
 
-// 🔥 BAZA AZURE SQL (POPRAWIONE)
+// 🔥 BAZA AZURE SQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=tcp:cloud-app-server-wiktoria.database.windows.net,1433;Initial Catalog=tasksdb;User ID=postgres@cloud-app-server-wiktoria;Password=AdminAdmin123$;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
 );
 
 var app = builder.Build();
 
+// routing
 app.UseRouting();
 
 // 🔥 CORS
 app.UseCors("AllowFrontend");
 
+// 🔥 FRONTEND (TO JEST NAJWAŻNIEJSZE)
+app.UseDefaultFiles();   // szuka index.html
+app.UseStaticFiles();   // serwuje pliki z wwwroot
+
+// kontrolery API
 app.MapControllers();
 
 // 🔥 MIGRACJE
@@ -38,7 +44,8 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// test
+// test endpoint
 app.MapGet("/", () => "API działa!");
 
+// start
 app.Run();

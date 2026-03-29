@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ToDo App</title>
+</head>
+<body>
+    <h1>Moje zadania</h1>
+
+    <input id="taskInput" placeholder="Nowe zadanie" />
+    <button onclick="addTask()">Dodaj</button>
+
+    <ul id="list"></ul>
+
+    <script>
+        const API = "/tasks";
+
+        async function loadTasks() {
+            const res = await fetch(API);
+            const data = await res.json();
+
+            const list = document.getElementById("list");
+            list.innerHTML = "";
+
+            data.forEach(t => {
+                const li = document.createElement("li");
+                li.textContent = t.name + (t.isCompleted ? " ✔" : "");
+                list.appendChild(li);
+            });
+        }
+
+        async function addTask() {
+            const input = document.getElementById("taskInput");
+
+            await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: input.value,
+                    isCompleted: false
+                })
+            });
+
+            input.value = "";
+            loadTasks();
+        }
+
+        loadTasks();
+    </script>
+</body>
+</html>
