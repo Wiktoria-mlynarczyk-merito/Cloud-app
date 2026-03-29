@@ -44,8 +44,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// test endpoint
-app.MapGet("/", () => "API działa!");
 
 // start
 app.Run();
