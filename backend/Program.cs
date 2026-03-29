@@ -17,9 +17,9 @@ builder.Services.AddCors(options =>
         });
 });
 
-// baza danych (Docker - postgres)
+// 🔥 BAZA AZURE SQL (POPRAWIONE)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Host=db;Port=5432;Database=tasksdb;Username=postgres;Password=postgres")
+    options.UseSqlServer("Server=tcp:cloud-app-server-wiktoria.database.windows.net,1433;Initial Catalog=tasksdb;User ID=postgres@cloud-app-server-wiktoria;Password=AdminAdmin123$;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
 );
 
 var app = builder.Build();
@@ -31,27 +31,11 @@ app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
-// 🔥 migracje + czekanie na bazę
+// 🔥 MIGRACJE
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    var retries = 10;
-    while (retries > 0)
-    {
-        try
-        {
-            Console.WriteLine("Łączenie z bazą...");
-            db.Database.Migrate();
-            Console.WriteLine("Baza gotowa!");
-            break;
-        }
-        catch
-        {
-            retries--;
-            Thread.Sleep(3000);
-        }
-    }
+    db.Database.Migrate();
 }
 
 // test
