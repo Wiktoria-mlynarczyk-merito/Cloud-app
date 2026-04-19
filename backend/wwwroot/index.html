@@ -39,8 +39,21 @@
                     span.style.textDecoration = "line-through";
                 }
 
+                
+                const btn = document.createElement("button");
+                btn.textContent = "Usuń";
+
+                btn.onclick = async () => {
+                    await fetch(API + "/" + t.id, {
+                        method: "DELETE"
+                    });
+
+                    loadTasks();
+                };
+
                 li.appendChild(checkbox);
                 li.appendChild(span);
+                li.appendChild(btn);
 
                 list.appendChild(li);
             });
@@ -48,6 +61,8 @@
 
         async function addTask() {
             const input = document.getElementById("taskInput");
+
+            if (!input.value.trim()) return; 
 
             await fetch(API, {
                 method: "POST",
