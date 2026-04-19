@@ -74,3 +74,80 @@ http://localhost:5173
 ✔ Artefakt 2 – Docker Compose  
 ✔ Artefakt 3 – Frontend React  
 ✔ Artefakt 4 – Backend REST API
+# Cloud App – Task Manager
+
+## 📌 Opis projektu
+Aplikacja webowa do zarządzania zadaniami (To-Do), działająca w chmurze Microsoft Azure.
+
+Użytkownik może:
+- dodawać zadania
+- oznaczać je jako wykonane
+- usuwać zadania
+
+---
+
+## 🛠 Technologie
+- ASP.NET Core (.NET 8)
+- Azure App Service
+- Azure SQL Database
+- Azure Key Vault
+- Managed Identity
+- JavaScript (frontend)
+
+---
+
+## ☁️ Architektura
+- Backend: ASP.NET API
+- Baza danych: Azure SQL
+- Frontend: statyczny HTML/JS w `wwwroot`
+- Bezpieczeństwo: Key Vault + Managed Identity
+
+---
+
+## 🔐 Bezpieczeństwo
+Connection string NIE znajduje się w kodzie.
+
+Został przeniesiony do:
+➡ Azure Key Vault  
+➡ pobierany przez Managed Identity  
+
+---
+
+## ⚙️ Funkcjonalności API
+
+### GET /tasks
+Pobiera listę zadań
+
+### POST /tasks
+Dodaje nowe zadanie
+
+### PUT /tasks/{id}
+Aktualizuje zadanie (np. checkbox)
+
+### DELETE /tasks/{id}
+Usuwa zadanie
+
+---
+
+## 🚀 Link do aplikacji
+
+https://cloud-app-backend-wiktoria-eygcfm6crhxfcve.germanywestcentral-01.azurewebsites.net
+
+---
+
+## 🧪 Testy
+Projekt zawiera testy jednostkowe xUnit:
+
+- sprawdzenie, czy nowe zadanie NIE jest oznaczone jako wykonane
+
+---
+
+## 🔄 CI/CD
+Projekt wykorzystuje GitHub Actions do automatycznego wdrażania na Azure.
+
+Po każdym `git push` aplikacja jest automatycznie aktualizowana.
+
+---
+
+## 👩‍💻 Autor
+Wiktoria Młynarczyk nr indeksu 100378
