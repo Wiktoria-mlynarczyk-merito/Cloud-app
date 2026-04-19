@@ -3,16 +3,16 @@ using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// 🔐 KEY VAULT
 builder.Configuration.AddAzureKeyVault(
     new Uri("https://kv-wiktoria.vault.azure.net/"),
     new DefaultAzureCredential()
 );
 
-
+// kontrolery
 builder.Services.AddControllers();
 
-
+// 🌐 CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
+// 🔥 CONNECTION STRING Z KEY VAULT
 var connectionString = builder.Configuration["DbConnectionString"];
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -39,9 +39,9 @@ app.UseRouting();
 // CORS
 app.UseCors("AllowFrontend");
 
-// frontend
-app.UseDefaultFiles();
-app.UseStaticFiles();
+// 🔥 FRONTEND (MUSI BYĆ PRZED MAPCONTROLLERS)
+app.UseDefaultFiles();   // szuka index.html
+app.UseStaticFiles();   // serwuje wwwroot
 
 // API
 app.MapControllers();
@@ -53,7 +53,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// test
-app.MapGet("/", () => "API działa!");
+
 
 app.Run();
