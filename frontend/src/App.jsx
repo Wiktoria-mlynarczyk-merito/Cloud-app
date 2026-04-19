@@ -31,7 +31,7 @@ function App() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Moje zadania</h1>
+      <h1>Moje zadania // WERSJA ARTEFAKT 8</h1>
 
       <input
         value={text}
