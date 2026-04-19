@@ -1,11 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// kontrolery
+
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://kv-wiktoria.vault.azure.net/"),
+    new DefaultAzureCredential()
+);
+
+
 builder.Services.AddControllers();
 
-// 🔥 CORS (żeby frontend działał)
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -17,9 +24,11 @@ builder.Services.AddCors(options =>
         });
 });
 
-// 🔥 BAZA AZURE SQL
+
+var connectionString = builder.Configuration["DbConnectionString"];
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=tcp:cloud-app-server-wiktoria.database.windows.net,1433;Initial Catalog=tasksdb;User ID=postgres@cloud-app-server-wiktoria;Password=AdminAdmin123$;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
+    options.UseSqlServer(connectionString)
 );
 
 var app = builder.Build();
@@ -27,23 +36,24 @@ var app = builder.Build();
 // routing
 app.UseRouting();
 
-// 🔥 CORS
+// CORS
 app.UseCors("AllowFrontend");
 
-// 🔥 FRONTEND (TO JEST NAJWAŻNIEJSZE)
-app.UseDefaultFiles();   // szuka index.html
-app.UseStaticFiles();   // serwuje pliki z wwwroot
+// frontend
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-// kontrolery API
+// API
 app.MapControllers();
 
-// 🔥 MIGRACJE
+// migracje
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
+// test
+app.MapGet("/", () => "API działa!");
 
-// start
 app.Run();
